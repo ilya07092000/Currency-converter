@@ -90,6 +90,10 @@ table {
 }
 
 .modal {
+    &__title {
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
     &__content {
         max-width: 600px;
         width: 100%;
@@ -99,6 +103,9 @@ table {
         border-radius: 5px;
         position: relative;
         padding: 20px;
+        transform: translateY(-100px);
+        opacity: 0;
+        transition: transform .2s linear, opacity .1s linear;
     }
     &__close {
         position: absolute;
@@ -114,6 +121,11 @@ table {
             opacity: .8;
         }
     }
+}
+
+.modal__overlay.active-modal .modal__content{
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .close__line {
@@ -134,5 +146,16 @@ table {
         height: 2px;
         background-color: inherit;
         transform: rotate(-90deg);
+    }
+}
+
+.box__item {
+    margin-bottom: 10px;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
+    &:last-child {
+        margin-bottom: 0;
     }
 }

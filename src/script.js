@@ -29,7 +29,7 @@ showCurrency()
 
 // MODAL WINDOW WITH CURRENCY
 
-let modalContent = document.querySelector('.modal__content');
+let modalContent = document.querySelector('.box');
 let modal = document.querySelector('.modal__overlay');
 
 // OPEN MODAL
@@ -44,7 +44,11 @@ async function modalOpen(event) {
     let title = `<p class="modal__title">${btn}</p>`;
     let content = '';
 
-    data.forEach(item => content += `<p>${item.ccy}</p>`);
+    data.forEach(item => content += `<p class="box__item" data-${btn}="${item.ccy}">${item.ccy}</p>`);
+
+    if(btn == 'to') {
+        content += `<p class="box__item" data-${btn}="UAH">UAH</p>`
+    }
 
     modalContent.innerHTML = title;
     modalContent.innerHTML += content;
@@ -59,13 +63,12 @@ function modalClose(event) {
 }
 
 // CURRENCY CALCULATOR
-
 let inputs = [...document.querySelectorAll('input')];
+let from = inputs[0];
+let to = inputs[1];
 inputs.forEach(item => item.addEventListener('input', updateValues));
 
 async function updateValues(event) {
-    let from = inputs[0];
-    let to = inputs[1];
 
     if(from.value > 0) {
         to.removeAttribute('disabled')
@@ -73,14 +76,39 @@ async function updateValues(event) {
         let fromCurrency = from.dataset.input;
         let toCurrency = to.dataset.input;
 
-        let toCurrencyData = data.find(item => item.ccy == fromCurrency);
-        let fromCurrencyData = data.find(item => item.ccy == toCurrency);
+        let fromCurrencyData = data.find(item => item.ccy == fromCurrency);
 
-        to.value = (+from.value * +toCurrencyData.buy).toFixed(2);
+        if(toCurrency !== 'UAH') {
+            let toCurrencyData = data.find(item => item.ccy == toCurrency);
+            let uahCourse = data.find(item => item.ccy == fromCurrency);
+            to.value = ((+uahCourse.buy / +toCurrencyData.buy) * +from.value).toFixed(2)
+        } else {
+            to.value = (+from.value * +fromCurrencyData.buy).toFixed(2);
+        }
     } else {
         to.setAttribute('disabled', 'disabled');
         to.value = 0;
     }
+}
+
+// CHANGE CURRENCY
+let exchangeBtn = document.querySelectorAll('.exchange__btn');
+let fromBtn = exchangeBtn[0];
+let toBtn = exchangeBtn[1];
+window.addEventListener('click', changeCurrency)
+
+function changeCurrency(event) {
+    let btn = event.target.dataset.from || event.target.dataset.to;
+    if(!btn) return;
+    let action = Object.keys(event.target.dataset);
+    if(action == 'from') {
+        from.dataset.input = btn;
+        fromBtn.textContent = btn;
+    } else {
+        to.dataset.input = btn;
+        toBtn.textContent = btn;
+    }
+    modal.classList.remove('active-modal');
 }
 
 
