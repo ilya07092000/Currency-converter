@@ -64,6 +64,39 @@ table {
     &__form {
         &__container {
             display: flex;
+            flex-direction: row;
+        }
+        &__divide {
+            width: 40%;
+            &:not(:last-child) {
+                margin-right: 20px;
+            }
+        }
+    }
+    &__btn {
+        width: 100%;
+        cursor: pointer;
+        margin-bottom: 10px;
+        background-color: rgb(38, 101, 235);
+        color: #fff;
+        padding: 10px 10px;
+        position: relative;
+        outline: none;
+        border: none;
+        border-radius: 2px;
+        &:hover {
+            opacity: .9;
+        }
+        &:before {
+            content: '';
+            position: absolute;
+            top: 28%;
+            right: 15px;
+            transform: rotate(45deg);
+            width: 10px;
+            height: 10px;
+            border-bottom: 2px solid #fff;
+            border-right: 2px solid #fff;
         }
     }
 }
@@ -158,4 +191,10 @@ table {
     &:last-child {
         margin-bottom: 0;
     }
+}
+
+.input__box input {
+    width: 100%;
+    padding: 5px;
+    font-size: 20px;
 }

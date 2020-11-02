@@ -100,7 +100,10 @@ async function updateValues(event) {
         } else {
             to.value = (+from.value * +fromCurrencyData.buy).toFixed(2);
         }
-    } else {
+    } else if (from.value < 0) {
+        from.value = 0;
+    }
+    else {
         to.setAttribute('disabled', 'disabled');
         to.value = 0;
     }
@@ -121,6 +124,7 @@ function changeCurrency(event) {
         toBtn.textContent = btn;
     }
     modal.classList.remove('active-modal');
+    updateValues();
 }
 
 
