@@ -1,5 +1,15 @@
 import './styles/styles.scss'
 
+// BTNS WIDTH CURRENT CURRENCY
+let exchangeBtn = document.querySelectorAll('.exchange__btn');
+let fromBtn = exchangeBtn[0];
+let toBtn = exchangeBtn[1];
+// INPUTS
+let inputs = [...document.querySelectorAll('input')];
+let from = inputs[0];
+let to = inputs[1];
+
+// FETCHING
 function getData() {
     return fetch('https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11')
     .then(response => {
@@ -28,7 +38,6 @@ async function showCurrency() {
 showCurrency()
 
 // MODAL WINDOW WITH CURRENCY
-
 let modalContent = document.querySelector('.box');
 let modal = document.querySelector('.modal__overlay');
 
@@ -41,8 +50,18 @@ async function modalOpen(event) {
     modal.classList.add('active-modal');
 
     let data = await getData();
+    insertModalContent(data, btn);
+}
+
+function insertModalContent(data, btn) {
     let title = `<p class="modal__title">${btn}</p>`;
     let content = '';
+
+    if(btn == 'from') {
+        data = data.filter(item => item.ccy !== toBtn.textContent.trim())
+    } else if(btn == 'to') {
+        data = data.filter(item => item.ccy !== fromBtn.textContent.trim())
+    }
 
     data.forEach(item => content += `<p class="box__item" data-${btn}="${item.ccy}">${item.ccy}</p>`);
 
@@ -63,13 +82,9 @@ function modalClose(event) {
 }
 
 // CURRENCY CALCULATOR
-let inputs = [...document.querySelectorAll('input')];
-let from = inputs[0];
-let to = inputs[1];
 inputs.forEach(item => item.addEventListener('input', updateValues));
 
 async function updateValues(event) {
-
     if(from.value > 0) {
         to.removeAttribute('disabled')
         let data = await getData();
@@ -92,9 +107,6 @@ async function updateValues(event) {
 }
 
 // CHANGE CURRENCY
-let exchangeBtn = document.querySelectorAll('.exchange__btn');
-let fromBtn = exchangeBtn[0];
-let toBtn = exchangeBtn[1];
 window.addEventListener('click', changeCurrency)
 
 function changeCurrency(event) {
