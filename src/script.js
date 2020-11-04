@@ -56,18 +56,9 @@ async function modalOpen(event) {
 function insertModalContent(data, btn) {
     let title = `<p class="modal__title">${btn}</p>`;
     let content = '';
-
-    if(btn == 'from') {
-        data = data.filter(item => item.ccy !== toBtn.textContent.trim())
-    } else if(btn == 'to') {
-        data = data.filter(item => item.ccy !== fromBtn.textContent.trim())
-    }
-
+    
+    content += `<p class="box__item" data-${btn}="UAH">UAH</p>`
     data.forEach(item => content += `<p class="box__item" data-${btn}="${item.ccy}">${item.ccy}</p>`);
-
-    if(btn == 'to') {
-        content += `<p class="box__item" data-${btn}="UAH">UAH</p>`
-    }
 
     modalContent.innerHTML = title;
     modalContent.innerHTML += content;
@@ -85,27 +76,36 @@ function modalClose(event) {
 inputs.forEach(item => item.addEventListener('input', updateValues));
 
 async function updateValues(event) {
-    if(from.value > 0) {
-        to.removeAttribute('disabled')
-        let data = await getData();
-        let fromCurrency = from.dataset.input;
-        let toCurrency = to.dataset.input;
+    let fromCurrency = from.dataset.input;
+    let toCurrency = to.dataset.input;
 
-        let fromCurrencyData = data.find(item => item.ccy == fromCurrency);
-
-        if(toCurrency !== 'UAH') {
-            let toCurrencyData = data.find(item => item.ccy == toCurrency);
-            let uahCourse = data.find(item => item.ccy == fromCurrency);
-            to.value = ((+uahCourse.buy / +toCurrencyData.buy) * +from.value).toFixed(2)
-        } else {
-            to.value = (+from.value * +fromCurrencyData.buy).toFixed(2);
+    if(fromCurrency == toCurrency) {
+        alert('Change currency')
+    } else {
+        if(from.value > 0) {
+            to.removeAttribute('disabled')
+            let data = await getData();
+    
+            let fromCurrencyData = data.find(item => item.ccy == fromCurrency);
+    
+            if(fromCurrency == 'UAH') {
+                let toCurrencyData = data.find(item => item.ccy == toCurrency);
+                to.value = (+from.value / +toCurrencyData.buy).toFixed(2);
+            }
+            else if(toCurrency !== 'UAH') {
+                let toCurrencyData = data.find(item => item.ccy == toCurrency);
+                let uahCourse = data.find(item => item.ccy == fromCurrency);
+                to.value = ((+uahCourse.buy / +toCurrencyData.buy) * +from.value).toFixed(2)
+            } else {
+                to.value = (+from.value * +fromCurrencyData.buy).toFixed(2);
+            }
+        } else if (from.value < 0) {
+            from.value = 0;
         }
-    } else if (from.value < 0) {
-        from.value = 0;
-    }
-    else {
-        to.setAttribute('disabled', 'disabled');
-        to.value = 0;
+        else {
+            to.setAttribute('disabled', 'disabled');
+            to.value = 0;
+        }
     }
 }
 
