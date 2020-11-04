@@ -8,6 +8,9 @@ let toBtn = exchangeBtn[1];
 let inputs = [...document.querySelectorAll('input')];
 let from = inputs[0];
 let to = inputs[1];
+// MODAL
+let modalContent = document.querySelector('.box');
+let modal = document.querySelector('.modal__overlay');
 
 // FETCHING
 function getData() {
@@ -18,7 +21,7 @@ function getData() {
 }
 
 // FETCH DATA AND INSERT IT IN TABLE
-async function showCurrency() {
+(async function showCurrency() {
     let data = await getData();
     let tableBody = document.querySelector('tbody');
     let date = new Date();
@@ -34,12 +37,7 @@ async function showCurrency() {
         tableBody.insertAdjacentHTML('beforeEnd', line);
     })
     console.log(data);
-}
-showCurrency()
-
-// MODAL WINDOW WITH CURRENCY
-let modalContent = document.querySelector('.box');
-let modal = document.querySelector('.modal__overlay');
+})()
 
 // OPEN MODAL
 window.addEventListener('click', modalOpen);
@@ -53,11 +51,12 @@ async function modalOpen(event) {
     insertModalContent(data, btn);
 }
 
+// ADD CONTENT TO MODAL
 function insertModalContent(data, btn) {
     let title = `<p class="modal__title">${btn}</p>`;
     let content = '';
-    
-    content += `<p class="box__item" data-${btn}="UAH">UAH</p>`
+
+    content += `<p class="box__item" data-${btn}="UAH">UAH</p>`;
     data.forEach(item => content += `<p class="box__item" data-${btn}="${item.ccy}">${item.ccy}</p>`);
 
     modalContent.innerHTML = title;
@@ -74,37 +73,30 @@ function modalClose(event) {
 
 // CURRENCY CALCULATOR
 inputs.forEach(item => item.addEventListener('input', updateValues));
-
 async function updateValues(event) {
-    let fromCurrency = from.dataset.input;
-    let toCurrency = to.dataset.input;
+    let fromCurrency = from.dataset.input; // data-input - current currency
+    let toCurrency = to.dataset.input; // data-input - current currency
 
-    if(fromCurrency == toCurrency) {
-        alert('Change currency')
+    if(fromCurrency == toCurrency) { // PREVENT SAME CURRENCY
+        alert('Change currency'); 
     } else {
         if(from.value > 0) {
-            to.removeAttribute('disabled')
             let data = await getData();
     
-            let fromCurrencyData = data.find(item => item.ccy == fromCurrency);
-    
-            if(fromCurrency == 'UAH') {
-                let toCurrencyData = data.find(item => item.ccy == toCurrency);
-                to.value = (+from.value / +toCurrencyData.buy).toFixed(2);
+            if(fromCurrency == 'UAH') { // DEDICATED CALCULATION TO CONVERT FROM UAH
+                let toCurrencyData = data.find(item => item.ccy == toCurrency); // WHAT CURRENCY TO CONVERT
+                to.value = (+from.value / +toCurrencyData.buy).toFixed(2); // CALCULATE AND INSERT VALUE
             }
-            else if(toCurrency !== 'UAH') {
-                let toCurrencyData = data.find(item => item.ccy == toCurrency);
-                let uahCourse = data.find(item => item.ccy == fromCurrency);
-                to.value = ((+uahCourse.buy / +toCurrencyData.buy) * +from.value).toFixed(2)
-            } else {
+            else if(toCurrency !== 'UAH') { // DEDICATED CALCULATION TO ANOTHER CURRENCY 
+                let toCurrencyData = data.find(item => item.ccy == toCurrency); // IN WHAT CURRENCY TO CONVERT
+                let uahCourse = data.find(item => item.ccy == fromCurrency); // FIND UAH COURSE IN CURRENT VALUE
+                to.value = ((+uahCourse.buy / +toCurrencyData.buy) * +from.value).toFixed(2) // CALCULATE AND INSERT VALUE
+            } else { // USUAL CASE
+                let fromCurrencyData = data.find(item => item.ccy == fromCurrency); // FIND CURRENCY COURSE IN ARRAY
                 to.value = (+from.value * +fromCurrencyData.buy).toFixed(2);
             }
         } else if (from.value < 0) {
             from.value = 0;
-        }
-        else {
-            to.setAttribute('disabled', 'disabled');
-            to.value = 0;
         }
     }
 }
