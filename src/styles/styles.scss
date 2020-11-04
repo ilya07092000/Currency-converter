@@ -38,7 +38,8 @@ table {
     width: 100%;
     border-spacing: 0;
     border: 1px solid #e5e5e5;
-    border-collapse: collapse; 
+    border-collapse: collapse;
+    margin-bottom: 50px; 
     & thead {
         background-color: #fafafa;
     }
@@ -67,7 +68,7 @@ table {
             flex-direction: row;
         }
         &__divide {
-            width: 40%;
+            width: 50%;
             &:not(:last-child) {
                 margin-right: 20px;
             }
@@ -115,6 +116,7 @@ table {
     min-height: 100vh;
     background-color: rgba(0, 0, 0, .5);
     transition: .2s linear;
+    padding: 20px;
     &.active-modal {
         z-index: 99999;
         opacity: 1;
@@ -197,4 +199,23 @@ table {
     width: 100%;
     padding: 5px;
     font-size: 20px;
+}
+
+
+// MEDIA
+
+@media(max-width: 575px) {
+    .values__table {
+        & thead {
+            display: none;
+        }
+        & td {
+            display: flex;
+            justify-content: space-between;
+            &:before {
+                content: attr(aria-label);
+                margin-right: 10px;
+            }
+        }
+    }
 }

@@ -28,10 +28,10 @@ function getData() {
     data.forEach(item => {
             let line = `
             <tr>
-                <td>${item.ccy}</td>
-                <td>${date.toLocaleDateString()}</td>
-                <td>${Number(item.buy).toFixed(2)}</td>
-                <td>${Number(item.sale).toFixed(2)}</td>
+                <td aria-label="Сurrency">${item.ccy}</td>
+                <td aria-label="Date">${date.toLocaleDateString()}</td>
+                <td aria-label="Buy">${Number(item.buy).toFixed(2)}</td>
+                <td aria-label="Sale">${Number(item.sale).toFixed(2)}</td>
             </tr>
         `
         tableBody.insertAdjacentHTML('beforeEnd', line);
@@ -78,7 +78,7 @@ async function updateValues(event) {
     let toCurrency = to.dataset.input; // data-input - current currency
 
     if(fromCurrency == toCurrency) { // PREVENT SAME CURRENCY
-        alert('Change currency'); 
+        alert('The same currency, change one of them'); 
     } else {
         if(from.value > 0) {
             let data = await getData();
